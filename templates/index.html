@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Voice Agent Debugger</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='syncscroll.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Industry Selection Popup -->
+    <div id="industryPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Select Agent Industry</h3>
+            <div id="industryList" class="industry-list"></div>
+            <div class="popup-buttons">
+                <button id="cancelIndustry" class="popup-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <button id="startButton" class="mic-button">Start Voice Agent</button>
+            <div id="currentIndustryDisplay" class="current-industry">Industry: <span>Tech Support</span></div>
+            <button id="industryButton" class="industry-button">Change Industry</button>
+            <div id="status" class="status">Microphone: Not active</div>
+            <div class="audio-controls">
+                <div class="device-select">
+                    <label for="voiceModel">Voice Model:</label>
+                    <select id="voiceModel"></select>
+                </div>
+                <div class="device-select">
+                    <label for="inputDevice">Input Device:</label>
+                    <select id="inputDevice"></select>
+                </div>
+            </div>
+            <div class="controls">
+                <label class="toggle">
+                    <input type="checkbox" id="showLogs">
+                    <span class="toggle-label">Show Logs</span>
+                </label>
+                <label class="toggle">
+                    <input type="checkbox" id="darkMode" checked>
+                    <span class="toggle-label">Dark Mode</span>
+                </label>
+            </div>
+            <div class="sample-data">
+                <h3>Sample Customer Data</h3>
+                <div class="sample-data-content">
+                    {% for customer in sample_data %}
+                    <div class="customer-card collapsed">
+                        <div class="customer-header">
+                            <div class="customer-info">
+                                <div><strong>{{ customer.Customer }}</strong></div>
+                                <div>ID: {{ customer.ID }}</div>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="customer-details">
+                            <div class="customer-contact">
+                                <div>Phone: {{ customer.Phone }}</div>
+                                <div>Email: {{ customer.Email }}</div>
+                            </div>
+                            {% if customer.Appointments %}
+                            <div class="customer-appointments">
+                                <strong>Appointments:</strong>
+                                {% for apt in customer.Appointments %}
+                                <div>{{ apt.Service }} - {{ apt.Date }} ({{ apt.Status }})</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if customer.Orders %}
+                            <div class="customer-orders">
+                                <strong>Orders:</strong>
+                                {% for order in customer.Orders %}
+                                <div>{{ order.ID }}</div>
+                                <div>- Items: {{ order['# Items'] }}</div>
+                                <div>- Total: {{ order.Total }}</div>
+                                <div>- Status: {{ order.Status }}</div>
+                                <div>- Date: {{ order.Date }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="columns-container">
+            <div id="conversation" class="timeline column">
+                <h2>Conversation</h2>
+                <div id="conversationMessages" class="syncscroll" name="timeline"></div>
+            </div>
+            <div id="logs" class="timeline column">
+                <h2>Logs</h2>
+                <div id="logMessages" class="syncscroll" name="timeline"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        const startButton = document.getElementById('startButton');
+        const industryButton = document.getElementById('industryButton');
+        const voiceModelSelect = document.getElementById('voiceModel');
+        const industryPopup = document.getElementById('industryPopup');
+        const industryList = document.getElementById('industryList');
+        const cancelIndustry = document.getElementById('cancelIndustry');
+        const currentIndustryDisplay = document.getElementById('currentIndustryDisplay').querySelector('span');
+        const conversationMessages = document.getElementById('conversationMessages');
+        const logMessages = document.getElementById('logMessages');
+        const statusDiv = document.getElementById('status');
+        const showLogsToggle = document.getElementById('showLogs');
+        const logsColumn = document.getElementById('logs');
+        const inputSelect = document.getElementById('inputDevice');
+        let isActive = false;
+        let currentGroup = null;
+        let lastMessageTimestamp = null;
+        let messageCounter = 0;
+        const messageHeights = new Map(); // Store heights by counter
+        const messageOrder = []; // Keep track of message order
+        let currentIndustry = 'indivillage'; // Default industry
+        let currentIndustryName = 'IndiVillage Tech Solutions'; // Default industry name
+        let currentVoiceModel = 'aura-2-thalia-en'; // Default voice model
+        let currentVoiceName = ''; // Will be populated from the model name
+
+        // Populate audio devices
+async function loadAudioDevices() {
+    try {
+        // Clear existing options
+        inputSelect.innerHTML = '';
+        
+        // First add a "Default" option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = "default";
+        defaultOption.text = "Default Device";
+        defaultOption.selected = true;
+        inputSelect.appendChild(defaultOption);
+        
+        // Get browser audio devices
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        
+        // Filter for audio input devices only
+        const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
+        
+        // Add browser audio devices
+        audioInputDevices.forEach((device, index) => {
+            // Skip default device which has empty label
+            if (device.label) {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Microphone ${index + 1}`;
+                inputSelect.appendChild(option);
+            }
+        });
+        
+        console.log(`Found ${audioInputDevices.length} browser audio input devices`);
+        
+        // If no devices with labels were found (which happens when permission hasn't been granted yet)
+        if (audioInputDevices.filter(d => d.label).length === 0) {
+            // Request permission to access audio devices for the browser
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach(track => track.stop());
+            
+            // Try again after getting permission
+            return loadAudioDevices();
+        }
+    } catch (err) {
+        console.error('Error loading audio devices:', err);
+        statusDiv.textContent = 'Error: Could not access audio devices';
+    }
+}
+
+        // Load devices initially and when devices change
+        navigator.mediaDevices.addEventListener('devicechange', loadAudioDevices);
+        loadAudioDevices();
+        
+        // Load TTS models
+        loadTTSModels();
+        
+        // Function to load TTS models from the API
+        function loadTTSModels() {
+            fetch('/tts-models')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error loading TTS models:', data.error);
+                        return;
+                    }
+                    
+                    // Clear existing options
+                    voiceModelSelect.innerHTML = '';
+                    
+                    // Add options for each model
+                    data.models.forEach(model => {
+                        if (!model.name) return; // Skip if no name
+                        
+                        const option = document.createElement('option');
+                        option.value = model.name; // Use canonical_name as the value
+                        
+                        // Get a display name for the voice
+                        let displayName = model.display_name || model.name;
+                        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+                        
+                        // Create descriptive text
+                        let description = '';
+                        if (model.accent) {
+                            description += model.accent + ' accent';
+                        }
+                        
+                        // Set the display text
+                        let optionText = displayName;
+                        if (model.language) {
+                            optionText += ' (' + model.language + ')';
+                        }
+                        if (description) {
+                            optionText += ' - ' + description;
+                        }
+                        option.text = optionText;
+                        
+                        // Store the voice name for later use
+                        option.dataset.voiceName = displayName;
+                        
+                        // Add tooltip with tags if available
+                        if (model.tags) {
+                            option.title = model.tags;
+                        }
+                        
+                        voiceModelSelect.appendChild(option);
+                    });
+                    
+                    // Set default selection if available
+                    if (voiceModelSelect.options.length > 0) {
+                        // If we have a current model, try to select it
+                        let found = false;
+                        if (currentVoiceModel) {
+                            for (let i = 0; i < voiceModelSelect.options.length; i++) {
+                                if (voiceModelSelect.options[i].value === currentVoiceModel) {
+                                    voiceModelSelect.selectedIndex = i;
+                                    currentVoiceName = voiceModelSelect.options[i].dataset.voiceName;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // If not found or no current model, select the first one
+                        if (!found) {
+                            voiceModelSelect.selectedIndex = 0;
+                            currentVoiceModel = voiceModelSelect.options[0].value;
+                            currentVoiceName = voiceModelSelect.options[0].dataset.voiceName;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching TTS models:', error);
+                });
+        }
+        
+        // Voice model selection handler
+        voiceModelSelect.addEventListener('change', function() {
+            currentVoiceModel = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+            currentVoiceName = selectedOption.dataset.voiceName;
+        });
+        
+        // Initialize industry display
+        function initializeIndustryDisplay() {
+            fetch('/industries')
+                .then(response => response.json())
+                .then(industries => {
+                    // Find the display name for the current industry
+                    if (industries[currentIndustry]) {
+                        currentIndustryName = industries[currentIndustry];
+                        currentIndustryDisplay.textContent = currentIndustryName;
+                    }
+                })
+                .catch(error => console.error('Error initializing industry display:', error));
+        }
+        
+        // Initialize industry display on page load
+        initializeIndustryDisplay();
+        
+        // Load available industries
+        function loadIndustries() {
+            fetch('/industries')
+                .then(response => response.json())
+                .then(industries => {
+                    industryList.innerHTML = '';
+                    Object.entries(industries).forEach(([key, name]) => {
+                        const item = document.createElement('div');
+                        item.className = 'industry-item';
+                        if (key === currentIndustry) {
+                            item.classList.add('selected');
+                        }
+                        item.dataset.industry = key;
+                        item.textContent = name;
+                        item.addEventListener('click', () => selectIndustry(key, name));
+                        industryList.appendChild(item);
+                    });
+                })
+                .catch(error => console.error('Error loading industries:', error));
+        }
+        
+        // Select industry and close popup
+        function selectIndustry(industry, name) {
+            currentIndustry = industry;
+            currentIndustryName = name;
+            currentIndustryDisplay.textContent = name;
+            closeIndustryPopup();
+            
+            // If agent is active, stop it and restart with new industry
+            if (isActive) {
+                socket.emit('stop_voice_agent');
+                startButton.textContent = 'Start Voice Agent';
+                statusDiv.textContent = 'Microphone: Not active';
+                isActive = false;
+                
+                // Add message about industry change
+                addConversationMessage({
+                    role: 'system',
+                    content: `Industry changed to ${name}. Click Start Voice Agent to continue.`
+                });
+            }
+        }
+        
+        // Show industry popup
+        function showIndustryPopup() {
+            loadIndustries();
+            industryPopup.style.display = 'flex';
+        }
+        
+        // Close industry popup
+        function closeIndustryPopup() {
+            industryPopup.style.display = 'none';
+        }
+        
+        // Industry button click handler
+        industryButton.addEventListener('click', showIndustryPopup);
+        
+        // Cancel button click handler
+        cancelIndustry.addEventListener('click', closeIndustryPopup);
+
+        // Send selected devices to server when starting
+        startButton.addEventListener('click', async () => {
+            if (!isActive) {
+                try {
+                    // Update status to show we're initializing
+                    statusDiv.textContent = 'Initializing audio capture...';
+                    
+                    // First check for microphone permission
+                    const hasPermission = await requestMicrophonePermission();
+                    if (!hasPermission) {
+                        statusDiv.textContent = 'Microphone permission denied';
+                        alert('Microphone permission is required for the voice agent to work.');
+                        return;
+                    }
+                    
+                    // Start capturing audio from the browser FIRST
+                    // This ensures we have audio working before starting the voice agent
+                    console.log('Starting audio capture...');
+                    const captureStarted = await startAudioCapture();
+                    if (!captureStarted) {
+                        statusDiv.textContent = 'Failed to start audio capture';
+                        alert('Failed to start audio capture. Please check your microphone settings and browser permissions.');
+                        return;
+                    }
+                    
+                    console.log('Audio capture started successfully, starting voice agent...');
+                    statusDiv.textContent = 'Starting voice agent...';
+                    
+                    // Now start the voice agent on the server
+                    socket.emit('start_voice_agent', {
+                        inputDeviceId: inputSelect.value,
+                        industry: currentIndustry,
+                        voiceModel: currentVoiceModel,
+                        voiceName: currentVoiceName,
+                        browserAudio: true // Flag to indicate browser is handling audio
+                    });
+                    
+                    startButton.textContent = 'Stop Voice Agent';
+                    statusDiv.textContent = 'Microphone: Active';
+                    isActive = true;
+                } catch (err) {
+                    console.error('Error in voice agent initialization:', err);
+                    statusDiv.textContent = 'Error: ' + err.message;
+                    alert('Error initializing voice agent: ' + err.message);
+                    stopAudioCapture(); // Clean up any partial initialization
+                }
+            } else {
+                socket.emit('stop_voice_agent');
+                stopAudioCapture();
+                startButton.textContent = 'Start Voice Agent';
+                statusDiv.textContent = 'Microphone: Not active';
+                isActive = false;
+            }
+        });
+
+        // Audio processing variables
+        let audioContext;
+        let mediaStream;
+        let processor;
+        let microphone;
+        
+        async function requestMicrophonePermission() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                statusDiv.textContent = 'Microphone: Permission granted';
+                stream.getTracks().forEach(track => track.stop()); // Stop the stream as we don't need it yet
+                return true;
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                statusDiv.textContent = 'Microphone: Permission denied';
+                return false;
+            }
+        }
+        
+        async function startAudioCapture() {
+            try {
+                // Get the selected device ID
+                const deviceId = inputSelect.value;
+                
+                console.log('Starting audio capture with device ID:', deviceId);
+                
+                // Step 1: Request microphone permission with minimal constraints first
+                console.log('Requesting microphone permission...');
+                let stream;
+                try {
+                    // First try with just basic audio permission
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    console.log('Basic microphone permission granted');
+                } catch (permissionErr) {
+                    console.error('Error getting microphone permission:', permissionErr);
+                    alert('Microphone permission denied: ' + permissionErr.message);
+                    return false;
+                }
+                
+                // Step 2: Now that we have permission, try with our desired constraints
+                try {
+                    // Configure audio constraints
+                    const audioConstraints = {
+                        // Use minimal constraints for better compatibility
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    };
+                    
+                    // Add deviceId constraint if a specific device is selected
+                    if (deviceId && deviceId !== 'default') {
+                        audioConstraints.deviceId = { exact: deviceId };
+                    }
+                    
+                    // Stop the initial stream
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // Get the audio stream with our desired constraints
+                    mediaStream = await navigator.mediaDevices.getUserMedia({
+                        audio: audioConstraints
+                    });
+                    
+                    console.log('MediaStream obtained successfully with constraints');
+                } catch (constraintErr) {
+                    console.error('Error with audio constraints, falling back to basic stream:', constraintErr);
+                    // If constraints fail, use the original stream
+                    mediaStream = stream;
+                }
+                
+                // Step 3: Create audio context and processing pipeline
+                try {
+                    // Create audio context
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('AudioContext created with input sample rate:', audioContext.sampleRate);
+                    
+                    // Create microphone source
+                    microphone = audioContext.createMediaStreamSource(mediaStream);
+                    console.log('Microphone source created');
+                    
+                    // Create script processor node for audio processing
+                    // Note: ScriptProcessorNode is deprecated but has better browser support than AudioWorklet
+                    const bufferSize = 4096;
+                    processor = audioContext.createScriptProcessor(bufferSize, 1, 1);
+                    console.log('Processor created with buffer size:', bufferSize);
+                    
+                    // Connect the nodes
+                    microphone.connect(processor);
+                    processor.connect(audioContext.destination);
+                    
+                    // Process audio data
+                    processor.onaudioprocess = function(e) {
+                        if (!isActive) return;
+                        
+                        // Get the audio data from the input channel
+                        const inputData = e.inputBuffer.getChannelData(0);
+                        
+                        // Convert to Int16 format for better compatibility with server-side processing
+                        const pcmData = new Int16Array(inputData.length);
+                        for (let i = 0; i < inputData.length; i++) {
+                            // Convert from [-1.0, 1.0] to [-32768, 32767]
+                            pcmData[i] = Math.max(-32768, Math.min(32767, Math.floor(inputData[i] * 32767)));
+                        }
+                        
+                        // Send the audio data to the server
+                        // Using binary transfer mode with Socket.IO
+                        socket.emit('audio_data', {
+                            audio: pcmData,
+                            sampleRate: audioContext.sampleRate
+                        });
+                    };
+                    
+                    console.log('Audio capture setup complete');
+                    return true;
+                } catch (audioErr) {
+                    console.error('Error setting up audio processing:', audioErr);
+                    // Clean up the stream if audio processing setup fails
+                    if (mediaStream) {
+                        mediaStream.getTracks().forEach(track => track.stop());
+                    }
+                    alert('Error setting up audio processing: ' + audioErr.message);
+                    return false;
+                }
+            } catch (err) {
+                console.error('Unexpected error in startAudioCapture:', err);
+                alert('Unexpected error starting audio capture: ' + err.message);
+                return false;
+            }
+        }
+        
+        function stopAudioCapture() {
+            if (processor) {
+                processor.disconnect();
+                processor = null;
+            }
+            
+            if (microphone) {
+                microphone.disconnect();
+                microphone = null;
+            }
+            
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+                audioContext = null;
+            }
+            
+            // Also stop audio output
+            stopAudioOutput();
+        }
+
+        function createSpacer(height) {
+            const spacer = document.createElement('div');
+            spacer.className = 'timeline-spacer';
+            spacer.style.height = `${height}px`;
+            return spacer;
+        }
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                conversationMessages.scrollTop = conversationMessages.scrollHeight;
+                logMessages.scrollTop = logMessages.scrollHeight;
+            });
+        }
+
+        // Add a message to the conversation display
+        function addConversationMessage(data) {
+            const timestamp = new Date().toISOString();
+            const currentCounter = messageCounter++;
+            messageOrder.push({ id: currentCounter, timestamp: timestamp, type: 'conversation' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `timeline-item message ${data.role}`;
+            messageDiv.textContent = `${data.role}: ${data.content}`;
+            messageDiv.dataset.messageId = currentCounter;
+            
+            insertTimelineItem(messageDiv, timestamp, conversationMessages);
+            
+            // Create a spacer in the log column
+            const logSpacer = createSpacer(messageDiv.offsetHeight);
+            logSpacer.dataset.messageId = currentCounter;
+            insertTimelineItem(logSpacer, timestamp, logMessages);
+            
+            if (!showLogsToggle.checked) {
+                logSpacer.style.display = 'none';
+                logSpacer.style.height = '0';
+            }
+            
+            syncscroll.reset();
+            scrollToBottom();
+        }
+
+        socket.on('conversation_update', (data) => {
+            const timestamp = data.timestamp || new Date().toISOString();
+            const currentCounter = messageCounter++;
+            messageOrder.push({ id: currentCounter, timestamp: timestamp, type: 'conversation' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `timeline-item message ${data.role}`;
+            messageDiv.textContent = `${data.role}: ${data.content}`;
+            messageDiv.dataset.messageId = currentCounter;
+            
+            insertTimelineItem(messageDiv, timestamp, conversationMessages);
+            
+            requestAnimationFrame(() => {
+                const actualHeight = messageDiv.offsetHeight;
+                messageHeights.set(currentCounter, actualHeight);
+                
+                const logSpacer = createSpacer(actualHeight);
+                logSpacer.dataset.messageId = currentCounter;
+                insertTimelineItem(logSpacer, timestamp, logMessages);
+                
+                if (!showLogsToggle.checked) {
+                    logSpacer.style.display = 'none';
+                    logSpacer.style.height = '0';
+                }
+                
+                syncscroll.reset();
+                scrollToBottom();
+            });
+        });
+
+        socket.on('log_message', (data) => {
+            const currentCounter = messageCounter++;
+            messageOrder.push({ id: currentCounter, timestamp: data.timestamp, type: 'log' });
+            
+            const logDiv = document.createElement('div');
+            logDiv.className = 'timeline-item log-message';
+            logDiv.setAttribute('data-original-text', data.message);
+            logDiv.innerHTML = convertAnsiToHtml(data.message);
+            logDiv.dataset.messageId = currentCounter;
+            
+            insertTimelineItem(logDiv, data.timestamp, logMessages);
+            
+            requestAnimationFrame(() => {
+                const actualHeight = logDiv.offsetHeight;
+                messageHeights.set(currentCounter, actualHeight);
+                
+                const conversationSpacer = createSpacer(actualHeight);
+                conversationSpacer.dataset.messageId = currentCounter;
+                insertTimelineItem(conversationSpacer, data.timestamp, conversationMessages);
+                
+                if (!showLogsToggle.checked) {
+                    conversationSpacer.style.display = 'none';
+                    conversationSpacer.style.height = '0';
+                }
+                
+                syncscroll.reset();
+                scrollToBottom();
+            });
+        });
+
+        function insertTimelineItem(element, timestamp, container) {
+            const time = new Date(timestamp);
+            
+            // Find the correct position to insert the new element
+            const items = container.children;
+            let insertPosition = container.childNodes.length;
+            
+            for (let i = 0; i < items.length; i++) {
+                const itemTime = new Date(items[i].dataset.timestamp);
+                if (time < itemTime) {
+                    insertPosition = i;
+                    break;
+                }
+            }
+            
+            element.dataset.timestamp = timestamp;
+            
+            if (insertPosition === container.childNodes.length) {
+                container.appendChild(element);
+            } else {
+                container.insertBefore(element, items[insertPosition]);
+            }
+        }
+
+        function convertAnsiToHtml(text) {
+            const ansiToHtml = {
+                // Dark mode colors
+                dark: {
+                    '[38;5;231m': 'color: #fff;',     // WHITE
+                    '[38;5;116m': 'color: #87d7d7;',  // BLUE
+                    '[38;5;114m': 'color: #87d787;',  // GREEN
+                    '[38;5;183m': 'color: #d7afff;',  // VIOLET
+                    '[38;5;186m': 'color: #d7d787;',  // YELLOW
+                },
+                // Light mode colors (darker variants)
+                light: {
+                    '[38;5;231m': 'color: #000;',     // BLACK
+                    '[38;5;116m': 'color: #0086b3;',  // BLUE
+                    '[38;5;114m': 'color: #008744;',  // GREEN
+                    '[38;5;183m': 'color: #8b3d90;',  // VIOLET
+                    '[38;5;186m': 'color: #b36d00;',  // YELLOW
+                },
+                // Reset is the same for both
+                '[0m': ''
+            };
+
+            // First remove all reset codes from the text
+            let html = text.replace(/\[0m/g, '');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const colorSet = isDarkMode ? ansiToHtml.dark : ansiToHtml.light;
+
+            for (const [ansi, style] of Object.entries(colorSet)) {
+                const parts = html.split(ansi);
+                if (parts.length > 1) {
+                    html = parts.map((part, i) => {
+                        if (i === 0) return part;
+                        return `<span style="${style}">${part}</span>`;
+                    }).join('');
+                }
+            }
+
+            return html;
+        }
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            isActive = false;
+            startButton.textContent = 'Start Voice Agent';
+            statusDiv.textContent = 'Microphone: Not active';
+        });
+
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+            alert('An error occurred. Please check the console for details.');
+        });
+        
+        // Audio output variables
+        let audioOutputContext = null;
+        let audioOutputQueue = [];
+        let isAudioOutputPlaying = false;
+        let nextPlayTime = 0; // Track when the next audio chunk should start
+        let audioOutputSampleRate = 16000; // Default, will be updated from server
+        
+        // Function to play audio output received from the server
+        function playAudioOutput(audioData, sampleRate, duration) {
+            try {
+                // Create audio context if it doesn't exist
+                if (!audioOutputContext) {
+                    audioOutputContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // Initialize nextPlayTime to current audio context time
+                    nextPlayTime = audioOutputContext.currentTime;
+                }
+                
+                // Update sample rate if provided
+                if (sampleRate) {
+                    audioOutputSampleRate = sampleRate;
+                }
+                
+                // Convert the binary audio data to Int16Array (raw PCM format from server)
+                const pcmData = new Int16Array(audioData);
+                
+                // Create a float32 array for the audio buffer
+                const floatData = new Float32Array(pcmData.length);
+                
+                // Convert Int16 PCM to Float32 audio data with gentle smoothing
+                for (let i = 0; i < pcmData.length; i++) {
+                    // Convert from Int16 (-32768 to 32767) to Float32 (-1.0 to 1.0)
+                    let sample = pcmData[i] / 32768.0;
+                    
+                    // Apply gentle smoothing to reduce cracking
+                    if (i > 0 && i < pcmData.length - 1) {
+                        sample = sample * 0.7 + (floatData[i-1] + pcmData[i+1] / 32768.0) * 0.15;
+                    }
+                    
+                    floatData[i] = sample;
+                }
+                
+                // Create an audio buffer with the correct sample rate
+                const audioBuffer = audioOutputContext.createBuffer(1, floatData.length, audioOutputSampleRate);
+                audioBuffer.getChannelData(0).set(floatData);
+                
+                // Schedule the audio buffer for seamless playback using server-provided duration
+                scheduleAudioBuffer(audioBuffer, duration);
+                
+            } catch (err) {
+                console.error('Error processing audio output:', err);
+            }
+        }
+        
+        // Schedule audio buffer for seamless playback
+        function scheduleAudioBuffer(audioBuffer, serverDuration) {
+            try {
+                // Create audio source
+                const source = audioOutputContext.createBufferSource();
+                source.buffer = audioBuffer;
+                
+                // Add a gain node for volume control
+                const gainNode = audioOutputContext.createGain();
+                gainNode.gain.value = 1.0; // Full volume
+                
+                // Connect the nodes
+                source.connect(gainNode);
+                gainNode.connect(audioOutputContext.destination);
+                
+                // Calculate when this chunk should start playing
+                const currentTime = audioOutputContext.currentTime;
+                
+                // Use server-provided duration for more accurate timing
+                const bufferDuration = serverDuration || audioBuffer.duration;
+                
+                // If nextPlayTime is in the past or too close to current time, start immediately
+                if (nextPlayTime <= currentTime + 0.01) {
+                    nextPlayTime = currentTime + 0.01; // Small buffer to prevent glitches
+                }
+                
+                // Schedule the audio to start at the calculated time
+                source.start(nextPlayTime);
+                
+                // Update nextPlayTime for the next chunk using server duration
+                nextPlayTime += bufferDuration;
+                
+                // Clean up old scheduled times if they're getting too far ahead
+                const maxLookahead = 1.0; // Maximum 1 second lookahead
+                if (nextPlayTime > currentTime + maxLookahead) {
+                    nextPlayTime = currentTime + 0.1; // Reset with small buffer
+                }
+                
+            } catch (err) {
+                console.error('Error scheduling audio buffer:', err);
+                // Reset timing on error
+                nextPlayTime = audioOutputContext.currentTime;
+            }
+        }
+        
+        // Clean up audio output resources
+        function stopAudioOutput() {
+            // Reset timing
+            nextPlayTime = 0;
+            
+            // Close the audio context to release resources
+            if (audioOutputContext && audioOutputContext.state !== 'closed') {
+                audioOutputContext.close();
+                audioOutputContext = null;
+            }
+            
+            // Reset variables
+            audioOutputSampleRate = 16000;
+        }
+
+        socket.on('audio_output', (data) => {
+            if (isActive) {
+                playAudioOutput(data.audio, data.sampleRate, data.duration);
+            }
+        });
+
+        showLogsToggle.addEventListener('change', () => {
+            logsColumn.style.display = showLogsToggle.checked ? 'flex' : 'none';
+            
+            if (showLogsToggle.checked) {
+                // Process messages in chronological order
+                messageOrder.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                
+                // First reset all spacers
+                const allSpacers = document.querySelectorAll('.timeline-spacer');
+                allSpacers.forEach(spacer => {
+                    spacer.style.display = 'block';
+                    const messageId = spacer.dataset.messageId;
+                    const height = messageHeights.get(parseInt(messageId));
+                    if (height) {
+                        spacer.style.height = `${height}px`;
+                    }
+                });
+                
+                messageOrder.forEach(message => {
+                    const height = messageHeights.get(message.id);
+                    if (height) {
+                        const logItem = logMessages.querySelector(`[data-message-id="${message.id}"]`);
+                        const conversationItem = conversationMessages.querySelector(`[data-message-id="${message.id}"]`);
+                        
+                        if (logItem && conversationItem) {
+                            if (message.type === 'log') {
+                                logItem.style.display = 'block';
+                                if (conversationItem.classList.contains('timeline-spacer')) {
+                                    conversationItem.style.display = 'block';
+                                    conversationItem.style.height = `${height}px`;
+                                }
+                            } else {
+                                conversationItem.style.display = 'block';
+                                if (logItem.classList.contains('timeline-spacer')) {
+                                    logItem.style.display = 'block';
+                                    logItem.style.height = `${height}px`;
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                requestAnimationFrame(() => {
+                    syncscroll.reset();
+                });
+            } else {
+                const allSpacers = document.querySelectorAll('.timeline-spacer');
+                allSpacers.forEach(spacer => {
+                    spacer.style.display = 'none';
+                    spacer.style.height = '0';
+                });
+            }
+        });
+
+        // Initialize logs visibility
+        logsColumn.style.display = showLogsToggle.checked ? 'flex' : 'none';
+
+        const darkModeToggle = document.getElementById('darkMode');
+        
+        // Initialize theme
+        document.body.classList.toggle('dark-mode', darkModeToggle.checked);
+        
+        // Theme toggle handler
+        darkModeToggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode', darkModeToggle.checked);
+            
+            // Save preference
+            localStorage.setItem('darkMode', darkModeToggle.checked);
+            
+            // Reprocess all log messages with new colors
+            const logMessages = document.querySelectorAll('.timeline-item.log-message');
+            logMessages.forEach(logMessage => {
+                const originalText = logMessage.getAttribute('data-original-text');
+                if (originalText) {
+                    logMessage.innerHTML = convertAnsiToHtml(originalText);
+                }
+            });
+        });
+        
+        // Load saved preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode !== null) {
+                const isDarkMode = savedDarkMode === 'true';
+                darkModeToggle.checked = isDarkMode;
+                document.body.classList.toggle('dark-mode', isDarkMode);
+            }
+        });
+
+        function toggleCustomer(card) {
+            const wasCollapsed = card.classList.contains('collapsed');
+            
+            // First collapse all cards
+            document.querySelectorAll('.customer-card').forEach(otherCard => {
+                otherCard.classList.add('collapsed');
+            });
+            
+            // Then expand the clicked card if it was collapsed
+            if (wasCollapsed) {
+                card.classList.remove('collapsed');
+            }
+        }
+
+        // Initialize all cards as collapsed
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.customer-card');
+            cards.forEach(card => {
+                card.classList.add('collapsed');
+                // Add click handler to entire card
+                card.addEventListener('click', () => toggleCustomer(card));
+            });
+        });
+    </script>
+</body>
+</html>
