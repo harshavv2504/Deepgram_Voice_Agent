@@ -1,0 +1,107 @@
+MIT License
+
+Copyright (c) 2025 IndiVillage Tech Solutions
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Third-Party Licenses
+
+This project includes third-party software components with their own licenses:
+
+### Flask
+- License: BSD-3-Clause
+- Copyright: 2010 Pallets
+- URL: https://flask.palletsprojects.com/
+
+### Socket.IO
+- License: MIT
+- Copyright: 2014-2018 Automattic
+- URL: https://socket.io/
+
+### PyAudio
+- License: MIT
+- Copyright: 2006 Hubert Pham
+- URL: https://people.csail.mit.edu/hubert/pyaudio/
+
+### Deepgram SDK
+- License: MIT
+- Copyright: 2021 Deepgram
+- URL: https://deepgram.com/
+
+### Google API Client
+- License: Apache-2.0
+- Copyright: 2014 Google Inc.
+- URL: https://github.com/googleapis/google-api-python-client
+
+### Markdown
+- License: BSD-3-Clause
+- Copyright: 2007-2008 The Python Markdown Project
+- URL: https://python-markdown.github.io/
+
+### PyYAML
+- License: MIT
+- Copyright: 2017-2021 Ingy döt Net, Kirill Simonov
+- URL: https://pyyaml.org/
+
+### Requests
+- License: Apache-2.0
+- Copyright: 2019 Kenneth Reitz
+- URL: https://requests.readthedocs.io/
+
+### Janus
+- License: Apache-2.0
+- Copyright: 2016-2021 aio-libs team
+- URL: https://github.com/aio-libs/janus
+
+### WebSockets
+- License: BSD-3-Clause
+- Copyright: 2013-2023 Aymeric Augustin
+- URL: https://websockets.readthedocs.io/
+
+---
+
+## Attribution
+
+This software was developed by IndiVillage Tech Solutions as part of their commitment to creating world-class technology solutions with world-changing social impact.
+
+For more information about IndiVillage Tech Solutions:
+- Website: https://indivillage.com
+- Email: contact@indivillage.com
+
+---
+
+## Disclaimer
+
+This software is provided for educational and demonstration purposes. While it includes realistic business logic and data structures, it uses mock data and should not be used for actual customer service operations without proper data integration and security measures.
+
+The voice agent system is designed to showcase AI-powered customer service capabilities and should be thoroughly tested and validated before any production deployment.
+
+---
+
+## Data Privacy Notice
+
+This software may process voice data and customer information. Users are responsible for:
+- Obtaining proper consent for voice recording and processing
+- Complying with applicable data protection regulations (GDPR, CCPA, etc.)
+- Implementing appropriate security measures for sensitive data
+- Ensuring proper data retention and deletion policies
+
+IndiVillage Tech Solutions is committed to data privacy and security in all its solutions.

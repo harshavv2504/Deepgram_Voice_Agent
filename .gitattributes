@@ -1,0 +1,244 @@
+# Git attributes for IndiVillage Voice Agent System
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.txt text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Configuration files
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+*.toml text eol=lf
+.env* text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Documentation
+*.rst text eol=lf
+*.mdx text eol=lf
+LICENSE text eol=lf
+CHANGELOG* text eol=lf
+CONTRIBUTING* text eol=lf
+README* text eol=lf
+
+# Docker files
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+
+# CI/CD files
+.github/**/* text eol=lf
+.pre-commit-config.yaml text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.webp binary
+*.bmp binary
+*.tiff binary
+
+# Audio files
+*.wav binary
+*.mp3 binary
+*.m4a binary
+*.aac binary
+*.flac binary
+*.ogg binary
+
+# Video files
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.wmv binary
+*.flv binary
+*.webm binary
+
+# Archive files
+*.zip binary
+*.tar binary
+*.gz binary
+*.bz2 binary
+*.7z binary
+*.rar binary
+
+# Font files
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+
+# Document files
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+*.ppt binary
+*.pptx binary
+
+# Database files
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+
+# Compiled files
+*.pyc binary
+*.pyo binary
+*.pyd binary
+*.so binary
+*.dll binary
+*.exe binary
+*.app binary
+
+# Package files
+*.egg binary
+*.whl binary
+*.deb binary
+*.rpm binary
+*.msi binary
+*.dmg binary
+
+# Certificate files
+*.p12 binary
+*.pfx binary
+*.crt binary
+*.cer binary
+*.der binary
+*.pem binary
+*.key binary
+
+# Jupyter notebooks - treat as text but with special handling
+*.ipynb text eol=lf
+
+# Language-specific settings
+*.py diff=python
+*.js diff=javascript
+*.html diff=html
+*.css diff=css
+
+# Git LFS (Large File Storage) - for large binary files
+# Uncomment and modify as needed for your project
+# *.wav filter=lfs diff=lfs merge=lfs -text
+# *.mp3 filter=lfs diff=lfs merge=lfs -text
+# *.mp4 filter=lfs diff=lfs merge=lfs -text
+# *.zip filter=lfs diff=lfs merge=lfs -text
+# *.tar.gz filter=lfs diff=lfs merge=lfs -text
+
+# Mock data files - treat as text for version control
+mock_data_outputs/*.json text eol=lf
+
+# Knowledge base files
+knowledgebase/**/*.mdx text eol=lf
+knowledgebase/**/*.json text eol=lf
+
+# Log files - treat as text but don't normalize line endings
+*.log text -eol
+
+# Temporary files - usually ignored but if tracked, treat as binary
+*.tmp binary
+*.temp binary
+*.cache binary
+
+# IDE and editor files
+.vscode/* text eol=lf
+.idea/* text eol=lf
+*.sublime-* text eol=lf
+
+# OS-specific files
+.DS_Store binary
+Thumbs.db binary
+desktop.ini text eol=crlf
+
+# Python-specific
+requirements*.txt text eol=lf
+setup.py text eol=lf
+setup.cfg text eol=lf
+pyproject.toml text eol=lf
+MANIFEST.in text eol=lf
+tox.ini text eol=lf
+pytest.ini text eol=lf
+
+# Node.js specific (if any frontend dependencies)
+package*.json text eol=lf
+*.npmrc text eol=lf
+yarn.lock text eol=lf
+
+# Makefile
+Makefile text eol=lf
+makefile text eol=lf
+*.mk text eol=lf
+
+# Scripts
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
+
+# Export ignore - files not included in git archive
+.gitattributes export-ignore
+.gitignore export-ignore
+.github/ export-ignore
+tests/ export-ignore
+docs/ export-ignore
+*.md export-ignore
+.pre-commit-config.yaml export-ignore
+tox.ini export-ignore
+pytest.ini export-ignore
+
+# Diff settings for better code review
+*.py diff=python
+*.js diff=javascript
+*.json diff=json
+*.md diff=markdown
+*.html diff=html
+*.css diff=css
+*.yml diff=yaml
+*.yaml diff=yaml
+
+# Merge settings
+*.json merge=union
+*.md merge=union
+
+# Custom diff drivers (if needed)
+# *.extension diff=custom-driver
+
+# Linguist overrides for GitHub language detection
+*.js linguist-language=JavaScript
+*.py linguist-language=Python
+*.html linguist-language=HTML
+*.css linguist-language=CSS
+*.md linguist-documentation
+*.txt linguist-documentation
+docs/* linguist-documentation
+tests/* linguist-detectable=false
+mock_data_outputs/* linguist-generated=true
+
+# Working tree encoding
+*.py working-tree-encoding=UTF-8
+*.js working-tree-encoding=UTF-8
+*.html working-tree-encoding=UTF-8
+*.css working-tree-encoding=UTF-8
+*.json working-tree-encoding=UTF-8
+*.md working-tree-encoding=UTF-8
+*.txt working-tree-encoding=UTF-8

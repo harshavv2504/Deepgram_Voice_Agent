@@ -1,0 +1,255 @@
+# Pre-commit configuration for IndiVillage Voice Agent System
+# See https://pre-commit.com for more information
+
+repos:
+  # General pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        description: Trims trailing whitespace
+      - id: end-of-file-fixer
+        description: Ensures files end with a newline
+      - id: check-yaml
+        description: Validates YAML files
+        args: ['--unsafe']  # Allow custom YAML tags
+      - id: check-json
+        description: Validates JSON files
+      - id: check-toml
+        description: Validates TOML files
+      - id: check-xml
+        description: Validates XML files
+      - id: check-added-large-files
+        description: Prevents giant files from being committed
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+        description: Checks for merge conflict markers
+      - id: debug-statements
+        description: Checks for debugger imports and breakpoints
+      - id: check-executables-have-shebangs
+        description: Ensures executables have shebangs
+      - id: check-shebang-scripts-are-executable
+        description: Ensures shebang scripts are executable
+      - id: fix-byte-order-marker
+        description: Removes UTF-8 byte order marker
+      - id: mixed-line-ending
+        description: Replaces mixed line endings
+      - id: check-case-conflict
+        description: Checks for case conflicts
+      - id: check-docstring-first
+        description: Checks docstring is first in Python files
+      - id: check-symlinks
+        description: Checks for broken symlinks
+      - id: destroyed-symlinks
+        description: Detects destroyed symlinks
+
+  # Python code formatting with Black
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        description: Formats Python code with Black
+        language_version: python3
+        args: ['--line-length=88']
+
+  # Python import sorting with isort
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        description: Sorts Python imports
+        args: ['--profile', 'black', '--line-length=88']
+
+  # Python linting with flake8
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        description: Lints Python code with flake8
+        additional_dependencies:
+          - flake8-docstrings
+          - flake8-import-order
+          - flake8-bugbear
+          - flake8-comprehensions
+          - flake8-simplify
+        args: ['--max-line-length=88', '--extend-ignore=E203,W503']
+
+  # Security linting with bandit
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        description: Finds security issues in Python code
+        args: ['-c', 'pyproject.toml']
+        additional_dependencies: ['bandit[toml]']
+
+  # Type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        description: Static type checking for Python
+        additional_dependencies: [types-all]
+        args: ['--ignore-missing-imports']
+
+  # Python docstring formatting
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        description: Checks Python docstring style
+        args: ['--convention=google']
+
+  # YAML formatting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        description: Formats YAML, JSON, and Markdown files
+        types_or: [yaml, json, markdown]
+        args: ['--tab-width=2']
+
+  # Shell script linting
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        description: Lints shell scripts
+
+  # Dockerfile linting
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        description: Lints Dockerfiles
+
+  # Secrets detection
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        description: Detects secrets in code
+        args: ['--baseline', '.secrets.baseline']
+        exclude: package.lock.json
+
+  # Python security and vulnerability scanning
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+      - id: python-safety-dependencies-check
+        description: Checks for known security vulnerabilities
+
+  # Commit message formatting
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        description: Checks commit message format
+        stages: [commit-msg]
+
+  # Python requirements.txt formatting
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v2.0.4
+    hooks:
+      - id: autopep8
+        description: Automatically formats Python code
+        args: ['--in-place', '--aggressive', '--aggressive']
+
+  # Remove unused imports
+  - repo: https://github.com/pycqa/autoflake
+    rev: v2.2.1
+    hooks:
+      - id: autoflake
+        description: Removes unused imports and variables
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variables
+          - --remove-duplicate-keys
+          - --ignore-init-module-imports
+
+  # Upgrade Python syntax
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        description: Upgrades Python syntax
+        args: [--py310-plus]
+
+  # Check Python AST
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+        description: Checks for blanket noqa comments
+      - id: python-check-blanket-type-ignore
+        description: Checks for blanket type ignore comments
+      - id: python-no-log-warn
+        description: Checks for deprecated log.warn usage
+      - id: python-use-type-annotations
+        description: Enforces type annotations over type comments
+      - id: rst-backticks
+        description: Checks RST backticks
+      - id: rst-directive-colons
+        description: Checks RST directive colons
+      - id: rst-inline-touching-normal
+        description: Checks RST inline code
+
+  # Local hooks for project-specific checks
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: ['--tb=short', '-q']
+        stages: [push]
+
+      - id: check-mock-data
+        name: check-mock-data
+        entry: python -c "import json; json.load(open('mock_data_outputs/mock_data.json', 'r')) if __import__('os').path.exists('mock_data_outputs/mock_data.json') else None"
+        language: system
+        pass_filenames: false
+        files: mock_data_outputs/.*\.json$
+
+      - id: check-knowledge-base
+        name: check-knowledge-base
+        entry: python -c "from knowledgebase.mdx_handler import MDXKnowledgeBase; kb = MDXKnowledgeBase(); print(f'Knowledge base has {len(kb.read_knowledge_base())} entries')"
+        language: system
+        pass_filenames: false
+        files: knowledgebase/mdx/.*\.mdx$
+
+      - id: validate-requirements
+        name: validate-requirements
+        entry: python -m pip check
+        language: system
+        pass_filenames: false
+        files: requirements.*\.txt$
+
+      - id: check-api-keys
+        name: check-api-keys
+        entry: python -c "import os; assert 'DEEPGRAM_API_KEY' in os.environ or os.path.exists('.env'), 'DEEPGRAM_API_KEY not found in environment or .env file'"
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [push]
+
+# Configuration
+default_stages: [commit]
+fail_fast: false
+minimum_pre_commit_version: '3.0.0'
+
+# CI configuration
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

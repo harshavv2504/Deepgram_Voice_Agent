@@ -1,0 +1,320 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "indivillage-voice-agent"
+version = "1.0.0"
+description = "AI-powered voice agent system for IndiVillage Tech Solutions"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "IndiVillage Tech Solutions", email = "contact@indivillage.com"}
+]
+maintainers = [
+    {name = "IndiVillage Tech Solutions", email = "contact@indivillage.com"}
+]
+keywords = [
+    "voice-agent",
+    "ai",
+    "customer-service",
+    "deepgram",
+    "flask",
+    "socketio",
+    "speech-recognition",
+    "text-to-speech",
+    "indivillage"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Customer Service",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: JavaScript",
+    "Topic :: Communications :: Telephony",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Office/Business :: Customer Relationship Management",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Framework :: Flask",
+    "Environment :: Web Environment",
+    "Natural Language :: English"
+]
+requires-python = ">=3.10"
+dependencies = [
+    "PyAudio==0.2.14",
+    "websockets==12.0",
+    "janus==1.0.0",
+    "Flask==3.0.0",
+    "Flask-SocketIO==5.3.6",
+    "python-dotenv==1.0.0",
+    "requests==2.32.3",
+    "google-api-python-client==2.108.0",
+    "google-auth-httplib2==0.1.1",
+    "google-auth-oauthlib==1.1.0",
+    "markdown>=3.5.0",
+    "PyYAML>=6.0",
+    "frontmatter>=3.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "pytest-asyncio>=0.21.1",
+    "black>=23.12.1",
+    "isort>=5.13.2",
+    "flake8>=6.1.0",
+    "mypy>=1.8.0",
+    "pylint>=3.0.3",
+    "pre-commit>=3.6.0",
+    "bandit>=1.7.5",
+    "safety>=2.3.5"
+]
+docs = [
+    "sphinx>=7.2.6",
+    "sphinx-rtd-theme>=2.0.0",
+    "myst-parser>=2.0.0"
+]
+test = [
+    "pytest>=7.4.3",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "pytest-asyncio>=0.21.1",
+    "factory-boy>=3.3.0",
+    "faker>=21.0.0",
+    "responses>=0.24.1",
+    "httpx>=0.26.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/indivillage/voice-agent-system"
+Documentation = "https://github.com/indivillage/voice-agent-system#readme"
+Repository = "https://github.com/indivillage/voice-agent-system.git"
+"Bug Tracker" = "https://github.com/indivillage/voice-agent-system/issues"
+Changelog = "https://github.com/indivillage/voice-agent-system/blob/main/CHANGELOG.md"
+"Security Policy" = "https://github.com/indivillage/voice-agent-system/blob/main/SECURITY.md"
+
+[project.scripts]
+voice-agent = "client:main"
+
+[tool.setuptools]
+packages = ["common", "knowledgebase"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md", "*.json", "*.html", "*.css", "*.js", "*.mdx"]
+
+# Black configuration
+[tool.black]
+line-length = 88
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | node_modules
+  | __pycache__
+)/
+'''
+
+# isort configuration
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["common", "knowledgebase"]
+known_third_party = ["flask", "socketio", "deepgram", "google"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+# mypy configuration
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "pyaudio.*",
+    "janus.*",
+    "frontmatter.*",
+    "google.*"
+]
+ignore_missing_imports = true
+
+# pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=common",
+    "--cov=knowledgebase",
+    "--cov-branch",
+    "--cov-report=term-missing",
+    "--cov-fail-under=80"
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "audio: marks tests that require audio hardware",
+    "api: marks tests that require external API access"
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning"
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["common", "knowledgebase"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/env/*",
+    "setup.py"
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod"
+]
+ignore_errors = true
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# Pylint configuration
+[tool.pylint.messages_control]
+disable = [
+    "C0103",  # Invalid name
+    "C0111",  # Missing docstring
+    "R0903",  # Too few public methods
+    "R0913",  # Too many arguments
+    "W0613",  # Unused argument
+    "W0622",  # Redefined builtin
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.design]
+max-args = 10
+max-locals = 20
+max-returns = 6
+max-branches = 15
+max-statements = 60
+max-parents = 7
+max-attributes = 10
+min-public-methods = 1
+max-public-methods = 25
+max-bool-expr = 5
+
+# Bandit configuration
+[tool.bandit]
+exclude_dirs = ["tests", "venv", "env", ".venv", ".env"]
+skips = ["B101", "B601"]  # Skip assert_used and shell_injection for tests
+
+# Flake8 configuration (in setup.cfg format since flake8 doesn't support pyproject.toml yet)
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503", "E501"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+    ".env",
+    "env"
+]
+per-file-ignores = [
+    "__init__.py:F401",
+    "tests/*:S101,S106"
+]
+
+# Pre-commit configuration
+[tool.pre-commit]
+repos = [
+    {
+        repo = "https://github.com/pre-commit/pre-commit-hooks",
+        rev = "v4.5.0",
+        hooks = [
+            {id = "trailing-whitespace"},
+            {id = "end-of-file-fixer"},
+            {id = "check-yaml"},
+            {id = "check-added-large-files"},
+            {id = "check-json"},
+            {id = "check-merge-conflict"},
+            {id = "debug-statements"}
+        ]
+    },
+    {
+        repo = "https://github.com/psf/black",
+        rev = "23.12.1",
+        hooks = [{id = "black"}]
+    },
+    {
+        repo = "https://github.com/pycqa/isort",
+        rev = "5.13.2",
+        hooks = [{id = "isort"}]
+    },
+    {
+        repo = "https://github.com/pycqa/flake8",
+        rev = "6.1.0",
+        hooks = [{id = "flake8"}]
+    },
+    {
+        repo = "https://github.com/pycqa/bandit",
+        rev = "1.7.5",
+        hooks = [{id = "bandit", args = ["-c", "pyproject.toml"]}]
+    }
+]
