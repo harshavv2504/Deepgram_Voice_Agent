@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help us improve the Voice Agent System
+about: Create a report to help us improve the TechFlow Voice Agent System
 title: '[BUG] '
 labels: 'bug'
 assignees: ''

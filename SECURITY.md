@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We actively support the following versions of the IndiVillage Voice Agent System with security updates:
+We actively support the following versions of the TechFlow Voice Agent System with security updates:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -21,7 +21,7 @@ We take security seriously. If you discover a security vulnerability, please fol
 
 Instead, please:
 
-1. **Email us directly** at: `security@indivillage.com`
+1. **Email us directly** at: `security@techflow.com`
 2. **Include the following information**:
    - Description of the vulnerability
    - Steps to reproduce the issue
@@ -187,15 +187,15 @@ Security advisories will be published:
 
 ### 🤝 Security Team
 
-- **Email**: security@indivillage.com
+- **Email**: security@techflow.com
 - **Response Time**: 24 hours for acknowledgment
 - **Escalation**: Critical issues escalated to leadership team
-- **Languages**: English, Hindi
+- **Languages**: English
 
 ### 📞 Emergency Contact
 
 For critical security issues requiring immediate attention:
-- **Email**: emergency-security@indivillage.com
+- **Email**: emergency-security@techflow.com
 - **Subject**: `[CRITICAL SECURITY] Voice Agent System`
 - **Response Time**: 4 hours maximum
 
@@ -213,4 +213,4 @@ We thank the security research community for helping keep our software secure. S
 
 **Remember**: Security is everyone's responsibility. If you see something, say something.
 
-For more information about IndiVillage's commitment to security, visit our [security page](https://indivillage.com/security).
+For more information about TechFlow's commitment to security, visit our [security page](https://techflow.com/security).

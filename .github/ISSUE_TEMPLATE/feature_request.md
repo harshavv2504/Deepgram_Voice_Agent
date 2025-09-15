@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for the Voice Agent System
+about: Suggest an idea for the TechFlow Voice Agent System
 title: '[FEATURE] '
 labels: 'enhancement'
 assignees: ''

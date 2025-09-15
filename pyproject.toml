@@ -3,16 +3,16 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "indivillage-voice-agent"
+name = "techflow-voice-agent"
 version = "1.0.0"
-description = "AI-powered voice agent system for IndiVillage Tech Solutions"
+description = "AI-powered voice agent system for TechFlow Solutions"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-    {name = "IndiVillage Tech Solutions", email = "contact@indivillage.com"}
+    {name = "TechFlow Solutions", email = "contact@techflow.com"}
 ]
 maintainers = [
-    {name = "IndiVillage Tech Solutions", email = "contact@indivillage.com"}
+    {name = "TechFlow Solutions", email = "contact@techflow.com"}
 ]
 keywords = [
     "voice-agent",
@@ -23,7 +23,7 @@ keywords = [
     "socketio",
     "speech-recognition",
     "text-to-speech",
-    "indivillage"
+    "techflow"
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -95,12 +95,12 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/indivillage/voice-agent-system"
-Documentation = "https://github.com/indivillage/voice-agent-system#readme"
-Repository = "https://github.com/indivillage/voice-agent-system.git"
-"Bug Tracker" = "https://github.com/indivillage/voice-agent-system/issues"
-Changelog = "https://github.com/indivillage/voice-agent-system/blob/main/CHANGELOG.md"
-"Security Policy" = "https://github.com/indivillage/voice-agent-system/blob/main/SECURITY.md"
+Homepage = "https://github.com/techflow/techflow-voice-agent"
+Documentation = "https://github.com/techflow/techflow-voice-agent#readme"
+Repository = "https://github.com/techflow/techflow-voice-agent.git"
+"Bug Tracker" = "https://github.com/techflow/techflow-voice-agent/issues"
+Changelog = "https://github.com/techflow/techflow-voice-agent/blob/main/CHANGELOG.md"
+"Security Policy" = "https://github.com/techflow/techflow-voice-agent/blob/main/SECURITY.md"
 
 [project.scripts]
 voice-agent = "client:main"

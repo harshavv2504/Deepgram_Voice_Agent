@@ -1,4 +1,4 @@
-# Makefile for IndiVillage Voice Agent System
+# Makefile for TechFlow Voice Agent System
 
 # Variables
 PYTHON := python
@@ -7,7 +7,7 @@ VENV := venv
 VENV_BIN := $(VENV)/bin
 VENV_PYTHON := $(VENV_BIN)/python
 VENV_PIP := $(VENV_BIN)/pip
-PROJECT_NAME := indivillage-voice-agent
+PROJECT_NAME := techflow-voice-agent
 DOCKER_IMAGE := voice-agent-system
 DOCKER_TAG := latest
 
@@ -27,7 +27,7 @@ RESET := \033[0m
 # Help target
 .PHONY: help
 help: ## Show this help message
-	@echo "$(CYAN)IndiVillage Voice Agent System - Makefile Commands$(RESET)"
+	@echo "$(CYAN)TechFlow Voice Agent System - Makefile Commands$(RESET)"
 	@echo ""
 	@echo "$(YELLOW)Available commands:$(RESET)"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -72,7 +72,7 @@ install-dev: ## Install development dependencies
 # Application commands
 .PHONY: run
 run: ## Run the application
-	@echo "$(BLUE)Starting IndiVillage Voice Agent System...$(RESET)"
+	@echo "$(BLUE)Starting TechFlow Voice Agent System...$(RESET)"
 	$(PYTHON) client.py
 
 .PHONY: run-dev
@@ -367,7 +367,7 @@ all: setup check test docker-build ## Run complete build pipeline
 # Information commands
 .PHONY: info
 info: ## Show project information
-	@echo "$(CYAN)IndiVillage Voice Agent System$(RESET)"
+	@echo "$(CYAN)TechFlow Voice Agent System$(RESET)"
 	@echo "$(YELLOW)Project Information:$(RESET)"
 	@echo "  Name: $(PROJECT_NAME)"
 	@echo "  Docker Image: $(DOCKER_IMAGE):$(DOCKER_TAG)"

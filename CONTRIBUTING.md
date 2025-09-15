@@ -1,6 +1,6 @@
-# Contributing to IndiVillage Voice Agent System
+# Contributing to TechFlow Voice Agent System
 
-Thank you for your interest in contributing to the IndiVillage Voice Agent System! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to the TechFlow Voice Agent System! This document provides guidelines and information for contributors.
 
 ## 🤝 How to Contribute
 
@@ -37,8 +37,8 @@ Thank you for your interest in contributing to the IndiVillage Voice Agent Syste
 ### Local Development
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/voice-agent-system.git
-cd voice-agent-system
+git clone https://github.com/your-username/techflow-voice-agent.git
+cd techflow-voice-agent
 
 # Create virtual environment
 python -m venv venv
@@ -239,4 +239,4 @@ Contributors will be recognized in:
 - **Release notes** for significant contributions
 - **GitHub contributors** section
 
-Thank you for contributing to IndiVillage Voice Agent System! 🚀
+Thank you for contributing to TechFlow Voice Agent System! 🚀

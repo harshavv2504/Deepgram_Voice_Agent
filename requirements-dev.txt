@@ -1,4 +1,4 @@
-# Development Dependencies for IndiVillage Voice Agent System
+# Development Dependencies for TechFlow Voice Agent System
 
 # Testing Framework
 pytest==7.4.3

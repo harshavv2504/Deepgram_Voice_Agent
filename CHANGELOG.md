@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the IndiVillage Voice Agent System will be documented in this file.
+All notable changes to the TechFlow Voice Agent System will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Knowledge Base Integration**
   - MDX-based knowledge management system
   - Fuzzy search capabilities across company information
-  - IndiVillage company data, services, and leadership information
+  - TechFlow company data, services, and leadership information
   - Dynamic content retrieval for voice responses
 
 - **Business Logic Layer**
@@ -182,4 +182,4 @@ For questions about releases or upgrade assistance:
 - Check the documentation
 - Review the troubleshooting guide
 
-Thank you for using IndiVillage Voice Agent System! 🚀
+Thank you for using TechFlow Voice Agent System! 🚀

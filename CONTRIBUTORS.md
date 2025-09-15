@@ -1,13 +1,13 @@
 # Contributors
 
-Thank you to all the people who have contributed to the IndiVillage Voice Agent System! 🎉
+Thank you to all the people who have contributed to the TechFlow Voice Agent System! 🎉
 
 ## Core Team
 
-### IndiVillage Tech Solutions
+### TechFlow Solutions
 - **Role**: Project Owner & Primary Maintainer
 - **Contributions**: Architecture, core development, business logic, knowledge base
-- **Contact**: contact@indivillage.com
+- **Contact**: contact@techflow.com
 
 ## How to Become a Contributor
 
@@ -252,6 +252,6 @@ This file is maintained by the core team and updated regularly. To suggest chang
 
 ---
 
-Thank you for being part of the IndiVillage Voice Agent System community! 🚀
+Thank you for being part of the TechFlow Voice Agent System community! 🚀
 
-*"Where world-class data meets world-changing impact"*
+*"Where cutting-edge AI meets exceptional customer experiences"*

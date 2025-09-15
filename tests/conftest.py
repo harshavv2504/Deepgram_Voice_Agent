@@ -1,5 +1,5 @@
 """
-Pytest configuration and fixtures for IndiVillage Voice Agent System tests.
+Pytest configuration and fixtures for TechFlow Voice Agent System tests.
 """
 
 import asyncio
@@ -188,7 +188,7 @@ def mock_media_stream():
 def voice_agent_settings():
     """Voice agent configuration for testing."""
     return {
-        "industry": "indivillage",
+        "industry": "techflow",
         "voiceModel": "aura-2-thalia-en",
         "voiceName": "Thalia",
         "browserAudio": True,

@@ -1,13 +1,13 @@
-# IndiVillage Voice Agent System
+# TechFlow Voice Agent System
 
-A sophisticated AI-powered voice agent system built for IndiVillage Tech Solutions, combining real-time voice interaction with comprehensive business logic for customer service, appointment scheduling, and knowledge base queries.
+A sophisticated AI-powered voice agent system built for TechFlow Solutions, combining real-time voice interaction with comprehensive business logic for customer service, appointment scheduling, and knowledge base queries.
 
 ## 🎯 Project Overview
 
 This is a **Flask-based voice agent application** that provides:
 - **Real-time voice conversations** using Deepgram's Voice Agent API
 - **Intelligent customer service** with appointment and order management
-- **Knowledge base integration** for IndiVillage company information
+- **Knowledge base integration** for TechFlow company information
 - **Web-based interface** for testing and debugging voice interactions
 - **Automatic meeting scheduling** with email and calendar integration
 
@@ -63,11 +63,11 @@ This is a **Flask-based voice agent application** that provides:
 - **Availability Checking**: Real-time appointment slot availability
 
 ### Knowledge Base Integration
-- **Company Information**: Comprehensive IndiVillage company data
-- **Service Details**: Information about data services and solutions
+- **Company Information**: Comprehensive TechFlow company data
+- **Service Details**: Information about AI and customer service solutions
 - **Leadership Team**: Executive and board member information
 - **Client Collaborations**: Partnership and client success stories
-- **Social Impact**: Rural empowerment and community initiatives
+- **Technology Innovation**: AI advancement and community initiatives
 
 ### Business Intelligence
 - **Mock Data System**: Generates realistic customer, appointment, and order data
@@ -132,12 +132,12 @@ The application will start on `http://localhost:5000`
 - *"Can you reschedule my meeting?"*
 - *"I need to create a new account"*
 
-#### IndiVillage Information
-- *"What does IndiVillage do?"*
+#### TechFlow Information
+- *"What does TechFlow do?"*
 - *"Tell me about your services"*
 - *"Who is the leadership team?"*
-- *"What is your social impact?"*
-- *"How can IndiVillage help my business?"*
+- *"What is your technology focus?"*
+- *"How can TechFlow help my business?"*
 
 ## 🏢 Business Logic
 
@@ -162,13 +162,13 @@ The application will start on `http://localhost:5000`
 ### Function Selection Intelligence
 The agent intelligently chooses between two function types:
 
-1. **Knowledge Base Functions** - For IndiVillage company questions
+1. **Knowledge Base Functions** - For TechFlow company questions
 2. **Customer Service Functions** - For operational tasks
 
 ### Conversation Management
 - **Context Awareness**: Maintains conversation context
 - **Intent Recognition**: Understands customer needs and goals
-- **Service Matching**: Connects customer problems to IndiVillage solutions
+- **Service Matching**: Connects customer problems to TechFlow solutions
 - **Consultation Guidance**: Knows when to offer business consultations
 
 ### Transcription Accuracy
@@ -267,7 +267,7 @@ docker run -p 5000:5000 -e DEEPGRAM_API_KEY=your_key voice-agent-system
 
 ## 📄 License
 
-This project is proprietary software developed for IndiVillage Tech Solutions.
+This project is proprietary software developed for TechFlow Solutions.
 
 ## 🆘 Support
 
@@ -288,4 +288,4 @@ For technical support or questions:
 
 ---
 
-**IndiVillage Tech Solutions** - Where world-class data meets world-changing impact.
+**TechFlow Solutions** - Where cutting-edge AI meets exceptional customer experiences.

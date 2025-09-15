@@ -1,8 +1,8 @@
-# IndiVillage Voice Agent System - API Documentation
+# TechFlow Voice Agent System - API Documentation
 
 ## Overview
 
-The IndiVillage Voice Agent System provides both REST API endpoints and WebSocket-based real-time communication for voice interaction capabilities.
+The TechFlow Voice Agent System provides both REST API endpoints and WebSocket-based real-time communication for voice interaction capabilities.
 
 ## Base URL
 
@@ -72,7 +72,7 @@ Returns available industry configurations for the voice agent.
 **Response:**
 ```json
 {
-  "indivillage": "IndiVillage Tech Solutions"
+  "techflow": "TechFlow Solutions"
 }
 ```
 
@@ -137,7 +137,7 @@ Starts a new voice agent session.
 **Payload:**
 ```json
 {
-  "industry": "indivillage",
+  "industry": "techflow",
   "voiceModel": "aura-2-thalia-en",
   "voiceName": "Thalia",
   "browserAudio": true,
@@ -335,13 +335,13 @@ Retrieves customer order history.
 
 #### search_knowledge_base
 
-Searches IndiVillage knowledge base.
+Searches TechFlow knowledge base.
 
 **Parameters:**
 - `query` (string): Search query
 
 **Example Usage:**
-- "What does IndiVillage do?"
+- "What does TechFlow do?"
 - "Tell me about your services"
 
 #### get_knowledge_base_topics
@@ -496,7 +496,7 @@ const socket = io();
 
 // Start voice agent
 socket.emit('start_voice_agent', {
-  industry: 'indivillage',
+  industry: 'techflow',
   voiceModel: 'aura-2-thalia-en',
   browserAudio: true
 });
@@ -532,7 +532,7 @@ def on_conversation_update(data):
 
 sio.connect('http://localhost:5000')
 sio.emit('start_voice_agent', {
-    'industry': 'indivillage',
+    'industry': 'techflow',
     'voiceModel': 'aura-2-thalia-en'
 })
 ```

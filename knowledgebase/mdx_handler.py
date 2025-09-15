@@ -245,19 +245,19 @@ class MDXKnowledgeBase:
                 'recognition': ['recognition_awards.mdx'],
                 'iaop': ['recognition_awards.mdx'],
                 'rockefeller': ['recognition_awards.mdx'],
-                'credibility': ['recognition_awards.mdx', 'why_choose_indivillage.mdx', 'leadership_team.mdx'],
-                'trust': ['why_choose_indivillage.mdx', 'recognition_awards.mdx'],
-                'reputation': ['recognition_awards.mdx', 'why_choose_indivillage.mdx'],
-                'certifications': ['leadership_team.mdx', 'why_choose_indivillage.mdx'],
-                'standards': ['leadership_team.mdx', 'why_choose_indivillage.mdx'],
-                'quality': ['why_choose_indivillage.mdx', 'client_collaborations.mdx'],
-                'reliable': ['why_choose_indivillage.mdx', 'client_collaborations.mdx'],
+                'credibility': ['recognition_awards.mdx', 'why_choose_techflow.mdx', 'leadership_team.mdx'],
+                'trust': ['why_choose_techflow.mdx', 'recognition_awards.mdx'],
+                'reputation': ['recognition_awards.mdx', 'why_choose_techflow.mdx'],
+                'certifications': ['leadership_team.mdx', 'why_choose_techflow.mdx'],
+                'standards': ['leadership_team.mdx', 'why_choose_techflow.mdx'],
+                'quality': ['why_choose_techflow.mdx', 'client_collaborations.mdx'],
+                'reliable': ['why_choose_techflow.mdx', 'client_collaborations.mdx'],
                 
                 # Why Choose
-                'why': ['why_choose_indivillage.mdx'],
-                'choose': ['why_choose_indivillage.mdx'],
-                'differentiation': ['why_choose_indivillage.mdx'],
-                'value': ['why_choose_indivillage.mdx']
+                'why': ['why_choose_techflow.mdx'],
+                'choose': ['why_choose_techflow.mdx'],
+                'differentiation': ['why_choose_techflow.mdx'],
+                'value': ['why_choose_techflow.mdx']
             }
             
             # STEP 1: Check for priority filename matches first (HIGHEST PRIORITY)
@@ -305,7 +305,7 @@ class MDXKnowledgeBase:
                         matching_entries.append(entry)
                         break
                 
-                # Also check for partial word matches (for compound words like IndiVillage)
+                # Also check for partial word matches (for compound words like TechFlow)
                 if not matching_entries or entry not in matching_entries:
                     if self._check_partial_matches(query_lower, searchable_text):
                         matching_entries.append(entry)
@@ -321,7 +321,7 @@ class MDXKnowledgeBase:
         
         # Common transcription mappings with priority
         transcription_map = {
-            'indivillage': ['in the village', 'india village', 'indie village', 'in village'],
+            'techflow': ['tech flow', 'technology flow', 'tech-flow', 'tech solutions'],
             'machine learning': ['machine learning', 'machinelearning', 'ml', 'machine learn'],
             'data science': ['data science', 'datascience', 'data scientist'],
             'python': ['python', 'python programming', 'python language'],
@@ -357,15 +357,15 @@ class MDXKnowledgeBase:
     
     def _check_partial_matches(self, query: str, searchable_text: str) -> bool:
         """Check for partial matches in compound words"""
-        # Special handling for IndiVillage variations
-        if 'village' in query.lower():
-            # Only match if it's likely referring to IndiVillage
-            if 'indivillage' in searchable_text.lower():
-                # Check if this is a social enterprise entry (more specific)
-                if 'social enterprise' in searchable_text.lower():
+        # Special handling for TechFlow variations
+        if 'flow' in query.lower():
+            # Only match if it's likely referring to TechFlow
+            if 'techflow' in searchable_text.lower():
+                # Check if this is a technology company entry (more specific)
+                if 'technology company' in searchable_text.lower():
                     return True
-                # Or if it's the only entry with "village" in the title
-                if 'indivillage' in searchable_text.lower() and 'tech solutions' in searchable_text.lower():
+                # Or if it's the only entry with "flow" in the title
+                if 'techflow' in searchable_text.lower() and 'solutions' in searchable_text.lower():
                     return True
         
         # Remove spaces and special characters for comparison

@@ -1,8 +1,8 @@
-# Deployment Guide - IndiVillage Voice Agent System
+# Deployment Guide - TechFlow Voice Agent System
 
 ## Overview
 
-This guide covers deployment options for the IndiVillage Voice Agent System, from development to production environments.
+This guide covers deployment options for the TechFlow Voice Agent System, from development to production environments.
 
 ## Table of Contents
 
@@ -113,8 +113,8 @@ else:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/indivillage/voice-agent-system.git
-   cd voice-agent-system
+   git clone https://github.com/techflow/techflow-voice-agent.git
+   cd techflow-voice-agent
    ```
 
 2. **Set up virtual environment:**

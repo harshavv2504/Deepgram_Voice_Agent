@@ -133,7 +133,7 @@ async def end_call(websocket, params):
 
 
 async def search_knowledge_base(params):
-    """Search the IndiVillage knowledge base for specific information."""
+    """Search the TechFlow knowledge base for specific information."""
     if not mdx_kb:
         return {"error": "Knowledge base not available"}
     
@@ -161,7 +161,7 @@ async def search_knowledge_base(params):
 
 
 async def get_knowledge_base_topics(params):
-    """Get all available topics in the IndiVillage knowledge base."""
+    """Get all available topics in the TechFlow knowledge base."""
     if not mdx_kb:
         return {"error": "Knowledge base not available"}
     
@@ -176,7 +176,7 @@ async def get_knowledge_base_topics(params):
 
 
 async def get_knowledge_base_entry(params):
-    """Get a specific entry from the IndiVillage knowledge base by topic or title."""
+    """Get a specific entry from the TechFlow knowledge base by topic or title."""
     if not mdx_kb:
         return {"error": "Knowledge base not available"}
     
@@ -462,24 +462,24 @@ FUNCTION_DEFINITIONS = [
     },
     {
         "name": "search_knowledge_base",
-        "description": """Search the IndiVillage knowledge base for specific information. Use this function when:
-        - Users ask questions about IndiVillage's services, company, leadership, or impact
-        - Users want to know about specific topics like data services, rural empowerment, or social enterprise
-        - Users ask "What does IndiVillage do?" or "Tell me about IndiVillage"
-        - Users want information about specific areas like workforce, locations, or client collaborations
+        "description": """Search the TechFlow knowledge base for specific information. Use this function when:
+        - Users ask questions about TechFlow's services, company, leadership, or technology
+        - Users want to know about specific topics like AI services, customer service automation, or technology innovation
+        - Users ask "What does TechFlow do?" or "Tell me about TechFlow"
+        - Users want information about specific areas like technology, locations, or client collaborations
         
         DO NOT use this function for:
         - Questions about other companies (Google, Microsoft, Apple, etc.)
-        - Topics unrelated to IndiVillage Tech Solutions
-        - General business questions not specific to IndiVillage
+        - Topics unrelated to TechFlow Solutions
+        - General business questions not specific to TechFlow
         
-        This function searches across all available topics in the IndiVillage knowledge base only.""",
+        This function searches across all available topics in the TechFlow knowledge base only.""",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "The search query or question from the user. Should be specific and relevant to IndiVillage Tech Solutions.",
+                    "description": "The search query or question from the user. Should be specific and relevant to TechFlow Solutions.",
                 }
             },
             "required": ["query"],
@@ -487,9 +487,9 @@ FUNCTION_DEFINITIONS = [
     },
     {
         "name": "get_knowledge_base_topics",
-        "description": """Get all available topics in the IndiVillage knowledge base. Use this function when:
+        "description": """Get all available topics in the TechFlow knowledge base. Use this function when:
         - Users ask "What topics can you tell me about?" or "What information do you have?"
-        - Users want to know what areas of IndiVillage you can discuss
+        - Users want to know what areas of TechFlow you can discuss
         - Users ask for an overview of available information
         - You need to show users what topics are available for discussion""",
         "parameters": {
@@ -499,15 +499,15 @@ FUNCTION_DEFINITIONS = [
     },
     {
         "name": "get_knowledge_base_entry",
-        "description": """Get a specific entry from the IndiVillage knowledge base by topic or title. Use this function when:
-        - Users ask for specific information about a particular IndiVillage topic
+        "description": """Get a specific entry from the TechFlow knowledge base by topic or title. Use this function when:
+        - Users ask for specific information about a particular TechFlow topic
         - Users want detailed information about a specific area like "leadership team" or "key services"
-        - Users ask "Tell me more about [specific IndiVillage topic]"
-        - You need to provide comprehensive information about a particular IndiVillage subject
+        - Users ask "Tell me more about [specific TechFlow topic]"
+        - You need to provide comprehensive information about a particular TechFlow subject
         
         DO NOT use this function for:
         - Questions about other companies (Google, Microsoft, Apple, etc.)
-        - Topics unrelated to IndiVillage Tech Solutions""",
+        - Topics unrelated to TechFlow Solutions""",
         "parameters": {
             "type": "object",
             "properties": {
@@ -517,7 +517,7 @@ FUNCTION_DEFINITIONS = [
                 },
                 "title": {
                     "type": "string",
-                    "description": "The specific title to search for (e.g., 'IndiVillage Tech Solutions - Company Overview')",
+                    "description": "The specific title to search for (e.g., 'TechFlow Solutions - Company Overview')",
                 }
             },
         },

@@ -54,8 +54,8 @@ class TestVoiceAgentIntegration:
         
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert "indivillage" in data
-        assert data["indivillage"] == "IndiVillage Tech Solutions"
+        assert "techflow" in data
+        assert data["techflow"] == "TechFlow Solutions"
     
     @patch('requests.get')
     def test_tts_models_route_success(self, mock_get, client):
@@ -132,7 +132,7 @@ class TestSocketIOEvents:
         """Test stopping voice agent via SocketIO."""
         # First start an agent
         with patch('client.run_async_voice_agent'):
-            socketio_client.emit('start_voice_agent', {"industry": "indivillage"})
+            socketio_client.emit('start_voice_agent', {"industry": "techflow"})
             socketio_client.sleep(0.1)
             
             # Then stop it
@@ -147,7 +147,7 @@ class TestSocketIOEvents:
         # Start voice agent first
         with patch('client.run_async_voice_agent'):
             socketio_client.emit('start_voice_agent', {
-                "industry": "indivillage",
+                "industry": "techflow",
                 "browserAudio": True
             })
             socketio_client.sleep(0.1)
@@ -169,13 +169,13 @@ class TestVoiceAgentClass:
         from client import VoiceAgent
         
         agent = VoiceAgent(
-            industry="indivillage",
+            industry="techflow",
             voiceModel="aura-2-thalia-en",
             voiceName="Thalia",
             browser_audio=True
         )
         
-        assert agent.industry == "indivillage"
+        assert agent.industry == "techflow"
         assert agent.voiceModel == "aura-2-thalia-en"
         assert agent.voiceName == "Thalia"
         assert agent.browser_audio is True

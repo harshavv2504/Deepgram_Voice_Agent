@@ -706,8 +706,8 @@ def handle_start_voice_agent(data=None):
     global voice_agent
     logger.info(f"Starting voice agent with data: {data}")
     if voice_agent is None:
-        # Get industry from data or default to indivillage
-        industry = data.get("industry", "indivillage") if data else "indivillage"
+        # Get industry from data or default to techflow
+        industry = data.get("industry", "techflow") if data else "techflow"
         voiceModel = (
             data.get("voiceModel", "aura-2-thalia-en") if data else "aura-2-thalia-en"
         )
